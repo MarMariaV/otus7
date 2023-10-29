@@ -1,18 +1,14 @@
 #include "bulk_class.h"
-#include <iostream>
-#include <fstream>
-#include <chrono>
-
 
 Bulk::Bulk(int N): m_N(N)
 {
+    consolePrint = ConsolePrinter::create(&commandPrintPubl);
+    filePrint = FilePrinter::create(&commandPrintPubl);
 }
 
-Bulk::~Bulk()
-{
-}
+Bulk::~Bulk() = default;
 
-void Bulk::setCmd(std::string cmd)
+void Bulk::setCmd(const std::string & cmd)
 {
 	if (cmd == "{")
 	{
@@ -34,7 +30,8 @@ void Bulk::setCmd(std::string cmd)
 		return;
 	}
 
-	q_cmd.push(cmd);
+    q_cmd.push_back(cmd);
+
 	if (q_cmd.size() == m_N && !m_inclBlock)
 	{
 		printBulk();
@@ -45,19 +42,7 @@ void Bulk::printBulk()
 {
 	if (q_cmd.empty()) return;
 
-	std::ofstream fout;
-	auto time = std::chrono::system_clock::now();
-	fout.open("bulk" + std::to_string(time.time_since_epoch().count()) + ".log", std::ios_base::out);
+    commandPrintPubl.setBulk(&q_cmd);
 
-	std::string cmd;
-	std::cout << "bulk: ";
-	while (!q_cmd.empty())
-	{
-		cmd = q_cmd.front();
-		q_cmd.pop();
-		std::cout << cmd << (!q_cmd.empty() ? ", " : "");
-		fout << cmd << (!q_cmd.empty() ? ", " : "");
-	}
-	std::cout << "\n";
-	fout.close();
+    q_cmd.clear();
 }

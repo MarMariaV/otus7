@@ -1,24 +1,27 @@
-#ifndef BULK_CLASS
-#define BULK_CLASS
+#pragma once
 
 #include <string>
-#include <queue>
+#include <vector>
+#include <memory>
+#include "observer.h"
 
 class Bulk
 {
 public:
-	Bulk(int N);
+	explicit Bulk(int N);
 	~Bulk();
 
-	void setCmd(std::string);
+	void setCmd(const std::string &);
 
 private:
-	int m_N;
-	int m_inclBlock = 0;
-	std::queue<std::string> q_cmd;
+	size_t m_N;
+    size_t m_inclBlock = 0;
+    std::vector<std::string> q_cmd;
+
+    CommandPrinterPublisher commandPrintPubl;
+    std::shared_ptr<ConsolePrinter> consolePrint;
+    std::shared_ptr<FilePrinter> filePrint;
 
 	void printBulk();
 };
-
-#endif
 
